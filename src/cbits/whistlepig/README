@@ -1,0 +1,121 @@
+= Whistlepig
+
+Whistlepig is a minimalist realtime full-text search index. Its goal is
+to be as small and maintainable as possible, while still remaining
+useful, performant and scalable to large corpora. If you want realtime
+full-text search without the frills, Whistlepig may be for you.
+
+Whistlepig is written in ANSI C99. It currently provides a C API and Ruby
+bindings.
+
+Latest version: 0.12, released 2012-06-09.
+        Status: beta
+          News: http://all-thing.net/label/whistlepig/
+      Homepage: http://masanjin.net/whistlepig/
+   Bug reports: http://github.com/wmorgan/whistlepig/issues
+
+= Getting it
+
+       Tarball:  http://masanjin.net/whistlepig/whistlepig-0.12.tar.gz
+       Rubygem:  gem install whistlepig
+           Git:  git clone git://github.com/wmorgan/whistlepig.git
+
+= Realtime search
+
+Roughly speaking, realtime search means:
+- documents are available to to queries immediately after indexing, without any
+  reindexing or index merging;
+- later documents are more important than earlier documents.
+
+Whistlepig takes these principles at face value.
+- It only returns documents in the reverse (LIFO) order to which they were
+  added, and performs no ranking, reordering, or scoring.
+- It only supports incremental indexing. There is no notion of batch indexing
+  or index merging.
+- It does not support document deletion or modification (except in the
+  special case of labels; see below).
+- It only supports in-memory indexes.
+
+Features that Whistlepig does provide:
+- Incremental indexing. Updates to the index are immediately available to
+  readers.
+- Fielded terms with arbitrary fields.
+- A full query language and parser with conjunctions, disjunctions, phrases,
+  negations, grouping, and nesting.
+- Labels: arbitrary tokens which can be added to and removed from documents
+  at any point, and incorporated into search queries.
+- Early query termination and resumable queries.
+- A tiny, < 3 KLOC ANSI C99 implementation.
+
+== Benchmarks
+
+On my not-particularly-new Linux desktop, I can index 8.5 MB/s of text
+data per process, including some minor parsing.
+
+Index sizes are roughly 50% of the original corpus size, e.g. the 1.4gb
+Enron email corpus (http://cs.cmu.edu/~enron/) is 753mb in the index.
+
+Query performance is entirely dependent on the queries and the index
+size. Run the benchmark-queries to see some examples.
+
+== Synopsis (using Ruby bindings)
+
+  require 'rubygems'
+  require 'whistlepig'
+
+  include Whistlepig
+
+  index = Index.new "index"
+
+  entry1 = Entry.new
+  entry1.add_string "body", "hello there bob"
+  docid1 = index.add_entry entry1              # => 1
+
+  entry2 = Entry.new
+  entry2.add_string "body", "goodbye bob"
+  docid2 = index.add_entry entry2              # => 2
+
+  q1 = Query.new "body", "bob"
+  results1 = index.search q1                   # => [2, 1]
+
+  q2 = q1.and Query.new("body", "hello")
+  results2 = index.search q2                   # => [1]
+
+  index.add_label docid2, "funny"
+
+  q3 = Query.new "body", "bob ~funny"
+  results3 = index.search q3                   # => [2]
+
+  entry3 = Entry.new
+  entry3.add_string "body", "hello joe"
+  entry3.add_string "subject", "what do you know?"
+  docid3 = index.add_entry entry3              # => 3
+
+  q4 = Query.new "body", "subject:know hello"
+  results4 = index.search q4                   # => [3]
+
+== Concurrency
+
+Whistlepig supports multi-process concurrency. Multiple reader and
+writer processes can access the same index without mangling data.
+
+Internally, Whistlepig uses pthread read-write locks to synchronize
+readers and writers. This allows multiple concurrent readers but only a
+single writer.
+
+While this locking approach guarantees index correctness, it decreases
+read and write performance when one or more writers exist. Systems with
+high write loads may benefit from sharding documents across independent
+indexes rather than sending everything to the same index.
+
+== Design tradeoffs
+
+I have generally erred on the side of maintainable code at the expense
+of speed. Simpler implementations have been preferred over more complex,
+faster versions. If you ever have to modify Whistlepig to suit your
+needs, you will appreciate this.
+
+== Bug reports
+
+Please file bugs here: https://github.com/wmorgan/whistlepig/issues
+Please send comments to: wmorgan-whistlepig-readme@masanjin.net.
