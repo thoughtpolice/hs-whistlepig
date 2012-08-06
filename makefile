@@ -37,6 +37,6 @@ update:
 
 clean:
 	rm -rf *~ dist*
-uberclean: clean
+distclean: clean
 	rm -rf $(OUT)
 	mkdir $(OUT)
