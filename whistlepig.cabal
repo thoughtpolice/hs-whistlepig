@@ -40,12 +40,30 @@ library
     base         >= 4,
     bytestring   >= 0.9
 
+  cc-options: -std=c99 -D_ANSI_SOURCE -D_XOPEN_SOURCE=600
+
   hs-source-dirs: src
   include-dirs:
     src/cbits/whistlepig
 
   -- why does cabal not allow globbing in c-sources?
   c-sources:
+    src/cbits/whistlepig/entry.c
+    src/cbits/whistlepig/error.c
+    src/cbits/whistlepig/index.c
+    src/cbits/whistlepig/lock.c
+    src/cbits/whistlepig/mmap-obj.c
+    src/cbits/whistlepig/query.c
+    src/cbits/whistlepig/query-parser.c
+    src/cbits/whistlepig/query-parser.lex.c
+    src/cbits/whistlepig/query-parser.tab.c
+    src/cbits/whistlepig/search.c
+    src/cbits/whistlepig/segment.c
+    src/cbits/whistlepig/snippeter.c
+    src/cbits/whistlepig/stringmap.c
+    src/cbits/whistlepig/stringpool.c
+    src/cbits/whistlepig/termhash.c
+    src/cbits/whistlepig/tokenizer.lex.c
 
   ghc-options:        -Wall -O2 -funbox-strict-fields
                       -fwarn-tabs

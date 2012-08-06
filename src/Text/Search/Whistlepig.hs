@@ -13,4 +13,4 @@ module Text.Search.Whistlepig
        ( -- * Types
          -- * TODO
        ) where
-import qualified Text.Search.Whistlepig.FFI as FFI
+import qualified Text.Search.Whistlepig.FFI as FFI()

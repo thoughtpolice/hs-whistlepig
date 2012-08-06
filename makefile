@@ -30,6 +30,9 @@ update:
 	$(Q)rm -rf $(TAR) $(NAME)
 	$(Q)echo OK
 
+# Give us the list of updated .c files:
+	$(Q)echo The following is the list of all .c files copied. Be sure to update whistlepig.cabal:
+	-$(Q)find src -type f -iname "*.c" | sort
 	$(Q)echo Done!
 
 clean:
