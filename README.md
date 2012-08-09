@@ -14,7 +14,9 @@ These are the awesome Haskell bindings.
 
 It's just a `cabal install` away on [Hackage][]:
 
-    $ cabal install whistlepig
+```bash
+$ cabal install whistlepig
+```
 
 # Join in
 
