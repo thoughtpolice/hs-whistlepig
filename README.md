@@ -45,4 +45,4 @@ BSD3. See `LICENSE.txt` for terms of copyright and redistribution.
 [issue tracker]: http://github.com/thoughtpolice/hs-whistlepig/issues
 [gh]: http://github.com/thoughtpolice/hs-whistlepig
 [bb]: http://bitbucket.org/thoughtpolice/hs-whistlepig
-[Hackage]: http://hackage.haskell.org/package/hs-whistlepig
+[Hackage]: http://hackage.haskell.org/package/whistlepig
