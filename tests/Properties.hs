@@ -13,6 +13,8 @@ import Text.Search.Whistlepig.FFI()
 
 main :: IO ()
 main = hspec $ do
+  -------------------------------------------------------------------------------
+  -- Indexes
   describe "indexes" $ do
     they "can be created" $ do
       idx <- createIndex "test" >>= errLeft "could not create"
@@ -20,8 +22,21 @@ main = hspec $ do
     they "do exist, unlike unicorns" $ do
       r <- indexExists "test"
       r @?= True
+    they "can be loaded" $ do
+      idx <- loadIndex "test" >>= errLeft "could not load"
+      closeIndex idx >>= errJust "could not close"
     they "can be destroyed" $
       deleteIndex "test" >>= errJust "could not delete"
+
+  -------------------------------------------------------------------------------
+  -- Entries
+
+  describe "entries" $ return ()
+
+  -------------------------------------------------------------------------------
+  -- Queries
+
+  describe "queries" $ return ()
 
 
 -- helpers
