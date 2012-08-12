@@ -50,10 +50,10 @@ module Text.Search.Whistlepig.FFI
        , c_wp_query_new_empty       -- :: IO (Ptr WP_Query_t)
        , c_wp_query_new_every       -- :: IO (Ptr WP_Query_t)
        , c_wp_query_clone           -- :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
-       , c_wp_query_addd            -- :: -> IO (Ptr WP_Query_t)
+       , c_wp_query_addd            -- :: ... -> IO (Ptr WP_Query_t)
        , c_wp_query_free            -- :: Ptr WP_Query_t -> IO ErrPtr
-       , c_wp_query_to_s            -- :: -> IO (Ptr WP_Query_t)
-
+       , c_wp_query_to_s            -- :: ...-> IO (Ptr WP_Query_t)
+       , c_wp_query_parse -- :: CString -> CString -> (Ptr (Ptr WP_Query_t)) -> IO ErrPtr
          -- * Searching
        ) where
 
@@ -66,6 +66,7 @@ import Foreign.C.String
 #include <whistlepig/index.h>
 #include <whistlepig/entry.h>
 #include <whistlepig/query.h>
+#include <whistlepig/query-parser.h>
 #include <whistlepig/search.h>
 
 -- Phantom Types
@@ -180,3 +181,6 @@ foreign import ccall unsafe "wp_query_free"
 
 foreign import ccall unsafe "wp_query_to_s"
   c_wp_query_to_s :: Ptr WP_Query_t -> CSize -> CString -> IO CSize
+
+foreign import ccall unsafe "wp_query_parse"
+  c_wp_query_parse :: CString -> CString -> Ptr (Ptr WP_Query_t) -> IO ErrPtr

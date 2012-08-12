@@ -10,8 +10,11 @@
 -- Entry interface
 --
 module Text.Search.Whistlepig.Entry
-       ( -- * Entries
+       ( -- ** Entries
+         -- $entries
          Entry(..)  -- :: *
+
+         -- *** Creating and manipulating entries
        , newEntry   -- :: IO Entry
        , entrySize  -- :: Entry -> IO Word32
        , addToken   -- :: Entry -> String -> String -> IO (Maybe Error)
@@ -32,8 +35,18 @@ import Text.Search.Whistlepig.Util
 -------------------------------------------------------------------------------
 -- Entries
 
+-- $entries
+-- An 'Entry' is a document before it is added to an index. It is a map of
+-- @(Field, Term)@ pairs to a sorted list of positions in the index.
+--
+-- This interface lets you incrementally build up documents in memory before
+-- adding them to the index.
+--
+
+-- | A document entry.
 newtype Entry = Entry (MVar (Ptr WP_Entry_t))
 
+-- | Create a new 'Entry'.
 newEntry :: IO Entry
 newEntry = do
     p <- newMVar =<< c_wp_entry_new
@@ -43,17 +56,27 @@ newEntry = do
     -- get rid of 'void!'
   where finalize = flip withMVar (void . c_wp_entry_free)
 
-entrySize :: Entry -> IO Word32
+-- | Get the size of an 'Entry'.
+entrySize :: Entry     -- ^ Entry
+          -> IO Word32 -- ^ Output size
 entrySize (Entry p) = withMVar p c_wp_entry_size
 
-addToken :: Entry -> String -> String -> IO (Maybe Error)
+-- | Add a token to an 'Entry' with a field.
+addToken :: Entry  -- ^ Entry
+         -> String -- ^ Field
+         -> String -- ^ Term
+         -> IO (Maybe Error)
 addToken (Entry e) f t = 
   withCString f $ \field ->
   withCString t $ \term  ->
   withMVar e $ \p        ->
     toError =<< c_wp_entry_add_token p field term
 
-addString :: Entry -> String -> String -> IO (Maybe Error)
+-- | Add a string to an 'Entry' with a field.
+addString :: Entry  -- ^ Input entry
+          -> String -- ^ Field
+          -> String -- ^ String
+          -> IO (Maybe Error)
 addString (Entry e) f s =
   withCString f $ \field ->
   withCString s $ \str   ->

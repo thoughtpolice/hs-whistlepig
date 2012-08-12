@@ -10,8 +10,12 @@
 -- Query interface
 --
 module Text.Search.Whistlepig.Query
-       ( -- * Queries
-         Query    -- :: *
+       ( -- ** Queries
+         -- $queries
+         Query         -- :: *
+
+         -- *** Parsing queries
+       , stringToQuery -- :: String -> String -> IO (Either Error Query)
        ) where
 
 {--}
@@ -36,4 +40,19 @@ import Text.Search.Whistlepig.Util
 -------------------------------------------------------------------------------
 -- Queries
 
+-- $queries
+-- A query is a ...
+--
+
+-- | An 'Index' query.
 newtype Query = Query (MVar (Ptr WP_Query_t))
+
+-- | Parse a 'String' into a 'Query'.
+--
+-- If a term in the input query does not have an associated field,
+-- then it is attached the field specified in the default field
+-- parameter.
+stringToQuery :: String -- ^ Query
+              -> String -- ^ Default field to assign a term to
+              -> IO (Either Error Query)
+stringToQuery _query _field = undefined

@@ -10,7 +10,10 @@
 -- Index interface
 --
 module Text.Search.Whistlepig.Index
-       ( -- * Indexes
+       ( -- ** Indexes
+         -- $indexes
+
+         -- *** Managing indexes.
          Index           -- :: *
        , indexExists     -- :: FilePath -> IO Bool
        , createIndex     -- :: FilePath -> IO (Maybe Index)
@@ -19,6 +22,7 @@ module Text.Search.Whistlepig.Index
        , deleteIndex     -- :: FilePath -> IO ()
        , indexSize       -- :: Index    -> Word64
 
+         -- *** Adding documents and entries.
        , DocID           -- :: *
        , addEntry        -- :: Entry -> Index -> IO (Either Error DocID)
        , addLabel        -- :: Entry -> String -> DocID -> IO (Maybe Error)
@@ -43,18 +47,27 @@ import Text.Search.Whistlepig.Util
 -------------------------------------------------------------------------------
 -- Indexes
 
+-- $indexes
+-- An 'Index' is a ...
+--
+
+-- | A search index.
 newtype Index = Idx (MVar (Ptr WP_Index_t))
 
+-- | A @DocID@ describes the position of a document
+-- in the sorted search index.
 newtype DocID = DocID Word64
 
--- | Check if an index exists at a particular @FilePath@
-indexExists :: FilePath -> IO Bool
+-- | Check if an 'Index' exists at a particular @FilePath@
+indexExists :: FilePath -- ^ Base path
+            -> IO Bool
 indexExists = flip withCString $ \path -> do
   err <- c_wp_index_exists path
   return $! if (err /= 0) then True else False
 
--- | Create an index on the filesystem with a base path.
-createIndex :: FilePath -> IO (Either Error Index)
+-- | Create an 'Index' on the filesystem with a base path.
+createIndex :: FilePath -- ^ Base path
+            -> IO (Either Error Index)
 createIndex = flip withCString $ \path ->
   allocaNull $ \out -> do
     err <- toError =<< c_wp_index_create out path
@@ -62,8 +75,9 @@ createIndex = flip withCString $ \path ->
   where
     go out = Right <$> (peek out >>= toIndex)
 
--- | Load an index from disk.
-loadIndex :: FilePath -> IO (Either Error Index)
+-- | Load an 'Index' from disk.
+loadIndex :: FilePath -- ^ Base path
+          -> IO (Either Error Index)
 loadIndex = flip withCString $ \path ->
   allocaNull $ \out -> do
     err <- toError =<< c_wp_index_load out path
@@ -71,24 +85,31 @@ loadIndex = flip withCString $ \path ->
   where
     go out = Right <$> (peek out >>= toIndex)
 
--- | Close an Index.
-closeIndex :: Index -> IO (Maybe Error)
+-- | Close an 'Index'.
+closeIndex :: Index -- ^ Index
+           -> IO (Maybe Error)
 closeIndex (Idx i) = withMVar i go
   where go ptr = c_wp_index_unload ptr >>= toError
 
--- | Delete an index from the disk.
-deleteIndex :: FilePath -> IO (Maybe Error)
+-- | Delete an 'Index' from the disk.
+deleteIndex :: FilePath -- ^ Base path
+            -> IO (Maybe Error)
 deleteIndex = flip withCString $ \path ->
   c_wp_index_delete path >>= toError
 
 -- | Get the number of documents in an index.
-indexSize :: Index -> IO (Either Error Word64)
+indexSize :: Index -- ^ Index
+          -> IO (Either Error Word64)
 indexSize (Idx i) = alloca (withMVar i . go)
   where go out ptr = do
           e <- toError =<< c_wp_index_num_docs ptr out
           maybe (Right <$> peek out) (return . Left) e
 
-addEntry :: Index -> Entry -> IO (Either Error DocID)
+-- | Add an 'Entry' to the 'Index' and return an 'Error'
+-- or the inserted 'DocID'.
+addEntry :: Index -- ^ Index
+         -> Entry -- ^ Entry
+         -> IO (Either Error DocID)
 addEntry (Idx i) (Entry e) =
   withMVar i $ \i' ->
   withMVar e $ \e' ->
@@ -96,13 +117,21 @@ addEntry (Idx i) (Entry e) =
     err <- toError =<< c_wp_index_add_entry i' e' out
     maybe (Right . DocID <$> peek out) (return . Left) err
 
-addLabel :: Index -> String -> DocID -> IO (Maybe Error)
+-- | Add a label to some particular 'DocID'.
+addLabel :: Index  -- ^ Index
+         -> String -- ^ Label
+         -> DocID  -- ^ Document to add label to
+         -> IO (Maybe Error)
 addLabel (Idx i) lbl (DocID did) =
   withCString lbl $ \lbl' ->
   withMVar i $ \i' ->
     toError =<< c_wp_index_add_label i' lbl' did
 
-removeLabel :: Index -> String -> DocID -> IO (Maybe Error)
+-- | Remove a label from some particular 'DocID'.
+removeLabel :: Index  -- ^ Index
+            -> String -- ^ Label
+            -> DocID  -- ^ Document to remove label from
+            -> IO (Maybe Error)
 removeLabel (Idx i) lbl (DocID did) =
   withCString lbl $ \lbl' ->
   withMVar i $ \i' ->
