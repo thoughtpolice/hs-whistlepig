@@ -11,7 +11,7 @@
 --
 module Text.Search.Whistlepig.Entry
        ( -- * Entries
-         Entry      -- :: *
+         Entry(..)  -- :: *
        , newEntry   -- :: IO Entry
        , entrySize  -- :: Entry -> IO Word32
        , addToken   -- :: Entry -> String -> String -> IO (Maybe Error)

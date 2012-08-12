@@ -29,6 +29,9 @@ module Text.Search.Whistlepig.FFI
        , c_wp_index_free       -- :: Ptr WP_Index_t -> IO ErrPtr
        , c_wp_index_delete     -- :: CString -> IO ErrPtr
        , c_wp_index_num_docs   -- :: Ptr WP_Index_t -> Ptr Word64 -> IO ErrPtr
+       , c_wp_index_add_entry    -- :: ...
+       , c_wp_index_add_label    -- :: ...
+       , c_wp_index_remove_label -- :: ...
 
          -- * Entries
        , c_wp_entry_new        -- :: IO (Ptr WP_Entry_t)
@@ -107,6 +110,15 @@ foreign import ccall unsafe "wp_index_delete"
 
 foreign import ccall unsafe "wp_index_num_docs"
   c_wp_index_num_docs :: Ptr WP_Index_t -> Ptr Word64 -> IO ErrPtr
+
+foreign import ccall unsafe "wp_index_add_entry"
+  c_wp_index_add_entry :: Ptr WP_Index_t -> Ptr WP_Entry_t -> Ptr Word64 -> IO ErrPtr
+
+foreign import ccall unsafe "wp_index_add_label"
+  c_wp_index_add_label :: Ptr WP_Index_t -> CString -> Word64 -> IO ErrPtr
+
+foreign import ccall unsafe "wp_index_remove_label"
+  c_wp_index_remove_label :: Ptr WP_Index_t -> CString -> Word64 -> IO ErrPtr
 
 
 -- Entries
