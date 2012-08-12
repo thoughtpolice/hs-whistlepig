@@ -27,8 +27,14 @@ import Text.Search.Whistlepig.FFI
 -------------------------------------------------------------------------------
 -- Errors
 
+-- TODO FIXME: expand ability to get error information
+
+-- | The @Error@ type is returned by Whistlepig functions to indicate errors
+-- somewhere.
 newtype Error = Error (ForeignPtr WP_Err_t)
 
+-- | Convenient wrapper that adds a finalizer to the 'Error' pointer if
+-- it is needed so it will get freed.
 toError :: Ptr WP_Err_t -> IO (Maybe Error)
 toError ptr
   | ptr == nullPtr = return Nothing
@@ -39,5 +45,6 @@ toError ptr
 -------------------------------------------------------------------------------
 -- Utilities
 
+-- | Allocate a pointer to a pointer and set it to @NULL@ to initialize it.
 allocaNull :: (Ptr (Ptr a) -> IO b) -> IO b
 allocaNull f = alloca $ \p -> poke p nullPtr >> f p

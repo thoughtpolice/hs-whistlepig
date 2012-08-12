@@ -29,9 +29,13 @@ module Text.Search.Whistlepig.FFI
        , c_wp_index_free       -- :: Ptr WP_Index_t -> IO ErrPtr
        , c_wp_index_delete     -- :: CString -> IO ErrPtr
        , c_wp_index_num_docs   -- :: Ptr WP_Index_t -> Ptr Word64 -> IO ErrPtr
-       , c_wp_index_add_entry    -- :: ...
-       , c_wp_index_add_label    -- :: ...
-       , c_wp_index_remove_label -- :: ...
+       , c_wp_index_add_entry      -- :: ...
+       , c_wp_index_add_label      -- :: ...
+       , c_wp_index_remove_label   -- :: ...
+       , c_wp_index_setup_query    -- :: Ptr WP_Index_t -> Ptr WP_Query_t -> IO ErrPtr
+       , c_wp_index_teardown_query -- :: Ptr WP_Index_t -> Ptr WP_Query_t -> IO ErrPtr
+       , c_wp_index_run_query      -- :: ...
+       , c_wp_index_count_results  -- :: ...
 
          -- * Entries
        , c_wp_entry_new        -- :: IO (Ptr WP_Entry_t)
@@ -71,6 +75,7 @@ import Foreign.C.String
 
 -- Phantom Types
 
+-- | Convenient alias
 type ErrPtr = Ptr WP_Err_t
 
 data WP_Err_t
@@ -121,6 +126,28 @@ foreign import ccall unsafe "wp_index_add_label"
 foreign import ccall unsafe "wp_index_remove_label"
   c_wp_index_remove_label :: Ptr WP_Index_t -> CString -> Word64 -> IO ErrPtr
 
+-- | Must be called BEFORE 'c_wp_index_run_query'!
+foreign import ccall unsafe "wp_index_setup_query"
+  c_wp_index_setup_query :: Ptr WP_Index_t -> Ptr WP_Query_t -> IO ErrPtr
+
+-- | Must be called AFTER 'c_wp_index_run_query'!
+foreign import ccall unsafe "wp_index_teardown_query"
+  c_wp_index_teardown_query :: Ptr WP_Index_t -> Ptr WP_Query_t -> IO ErrPtr
+
+foreign import ccall unsafe "wp_index_run_query"
+  c_wp_index_run_query :: Ptr WP_Index_t
+                       -> Ptr WP_Query_t
+                       -> Word32
+                       -> Ptr Word32
+                       -> Ptr Word64
+                       -> IO ErrPtr
+
+foreign import ccall unsafe "wp_index_count_results"
+  c_wp_index_count_results :: Ptr WP_Index_t
+                           -> Ptr WP_Query_t
+                           -> Ptr Word32
+                           -> IO ErrPtr
+
 
 -- Entries
 
@@ -138,6 +165,7 @@ foreign import ccall unsafe "wp_entry_add_string"
 
 foreign import ccall unsafe "wp_entry_free"
   c_wp_entry_free :: Ptr WP_Entry_t -> IO ErrPtr
+
 
 -- Queries
 

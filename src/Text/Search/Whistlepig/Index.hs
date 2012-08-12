@@ -27,6 +27,10 @@ module Text.Search.Whistlepig.Index
        , addEntry        -- :: Entry -> Index -> IO (Either Error DocID)
        , addLabel        -- :: Entry -> String -> DocID -> IO (Maybe Error)
        , removeLabel     -- :: Entry -> String -> DocID -> IO (Maybe Error)
+
+         -- *** Running queries
+       , runQuery        -- ::
+       , countResults    -- :: Index -> Query -> IO (Either Error Word32)
        ) where
 
 import Data.Word
@@ -39,8 +43,11 @@ import Foreign.Marshal.Alloc
 import Control.Applicative
 import Control.Concurrent
 
-import Text.Search.Whistlepig.FFI
+import Control.Monad.IO.Class
+
 import Text.Search.Whistlepig.Entry
+import Text.Search.Whistlepig.FFI
+import Text.Search.Whistlepig.Query
 import Text.Search.Whistlepig.Util
 
 
@@ -137,6 +144,26 @@ removeLabel (Idx i) lbl (DocID did) =
   withMVar i $ \i' ->
     toError =<< c_wp_index_remove_label i' lbl' did
 
+-- Type of results you get from running a 'Query'.
+type Results = [DocID]
+
+-- | Run a 'Query' against an 'Index'.
+runQuery :: Index -> Query -> IO (Either Error Results)
+runQuery (Idx _i) (Query _q) = undefined
+
+-- | Returns the number of results that match a query. Note
+-- this is about as expensive as executing 'runQuery' modulo
+-- some extra memory allocations here and there.
+countResults :: Index -> Query -> IO (Either Error Word32)
+countResults (Idx i) (Query q) =
+  alloca $ \out ->
+  withMVar i $ \idx ->
+  withMVar q $ \query -> do
+    -- TODO FIXME: shouldn't ignore err. shouldn't leak at least.
+    void $ toError =<< c_wp_index_setup_query idx query
+    e <- liftIO $ toError =<< c_wp_index_count_results idx query out
+    void $ toError =<< c_wp_index_teardown_query idx query
+    maybe (Right <$> peek out) (return . Left) e
 
 -------------------------------------------------------------------------------
 -- Utilities

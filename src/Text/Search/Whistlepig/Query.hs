@@ -12,7 +12,7 @@
 module Text.Search.Whistlepig.Query
        ( -- ** Queries
          -- $queries
-         Query         -- :: *
+         Query(..)     -- :: *
 
          -- *** Parsing queries
        , stringToQuery -- :: String -> String -> IO (Either Error Query)

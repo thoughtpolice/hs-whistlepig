@@ -38,6 +38,9 @@ main = hspec $ do
   -- Queries
   describe "queries" $ return ()
 
+  -------------------------------------------------------------------------------
+  -- Searching
+  describe "searching" $ return ()
 
 -- helpers
 errLeft :: String -> Either a b -> IO b
