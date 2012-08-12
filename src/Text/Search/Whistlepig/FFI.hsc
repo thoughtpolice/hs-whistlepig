@@ -27,8 +27,10 @@ module Text.Search.Whistlepig.FFI
        , c_wp_index_unload  -- :: Ptr WP_Index_t -> IO ErrPtr
        , c_wp_index_free    -- :: Ptr WP_Index_t -> IO ErrPtr
        , c_wp_index_delete  -- :: CString -> IO ErrPtr
+       , c_wp_index_num_docs -- :: Ptr WP_Index_t -> Ptr Word64 -> IO ErrPtr
        ) where
 
+import Data.Word
 import Foreign
 import Foreign.C.Types
 import Foreign.C.String
@@ -73,3 +75,6 @@ foreign import ccall unsafe "wp_index_free"
 
 foreign import ccall unsafe "wp_index_delete"
   c_wp_index_delete :: CString -> IO ErrPtr
+
+foreign import  ccall unsafe "wp_index_num_docs"
+  c_wp_index_num_docs :: Ptr WP_Index_t -> Ptr Word64 ->IO ErrPtr

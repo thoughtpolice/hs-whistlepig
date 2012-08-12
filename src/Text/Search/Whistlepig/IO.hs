@@ -63,6 +63,7 @@ createIndex = flip withCString $ \path ->
   where
     go out = Right <$> (peek out >>= toIndex)
 
+-- | Load an index from disk.
 loadIndex :: FilePath -> IO (Either Error Index)
 loadIndex = flip withCString $ \path ->
   allocaNull $ \out -> do
@@ -71,6 +72,7 @@ loadIndex = flip withCString $ \path ->
   where
     go out = Right <$> (peek out >>= toIndex)
 
+-- Helper
 toIndex :: Ptr WP_Index_t -> IO Index
 toIndex ptr = do
     mvar <- newMVar ptr
@@ -91,9 +93,12 @@ deleteIndex = flip withCString $ \path ->
   c_wp_index_delete path >>= toError
 
 -- | Get the number of documents in an index.
-indexSize :: Index -> IO Word64
-indexSize (Idx _) = do
-  return 0
+indexSize :: Index -> IO (Either Error Word64)
+indexSize (Idx i) = alloca (withMVar i . go)
+  where go out ptr = do
+          e <- toError =<< c_wp_index_num_docs ptr out
+          maybe (Right <$> copy out) (return . Left) e
+        copy p = fromIntegral <$> peek p
 
 -------------------------------------------------------------------------------
 -- Errors

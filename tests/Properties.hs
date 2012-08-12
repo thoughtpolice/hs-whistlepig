@@ -2,10 +2,7 @@ module Main
        ( main -- :: IO ()
        ) where
 
-import Control.Applicative
-
 import Test.Hspec
-import Test.Hspec.HUnit
 import Test.HUnit
 
 import Text.Search.Whistlepig.IO
@@ -25,17 +22,20 @@ main = hspec $ do
     they "can be loaded" $ do
       idx <- loadIndex "test" >>= errLeft "could not load"
       closeIndex idx >>= errJust "could not close"
+    they "should be empty right now" $ do
+      idx <- loadIndex "test" >>= errLeft "could not load"
+      sz  <- indexSize idx >>= errLeft "could not get size"
+      sz @?= 0
+      closeIndex idx >>= errJust "could not close"
     they "can be destroyed" $
       deleteIndex "test" >>= errJust "could not delete"
 
   -------------------------------------------------------------------------------
   -- Entries
-
   describe "entries" $ return ()
 
   -------------------------------------------------------------------------------
   -- Queries
-
   describe "queries" $ return ()
 
 
@@ -48,4 +48,5 @@ errJust :: String -> Maybe a -> IO ()
 errJust _ Nothing  = return ()
 errJust x (Just _) = error x
 
+they :: String -> IO () -> Spec
 they = it -- plural
