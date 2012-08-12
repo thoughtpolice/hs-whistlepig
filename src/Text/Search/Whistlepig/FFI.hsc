@@ -13,13 +13,13 @@
 --
 module Text.Search.Whistlepig.FFI
        ( -- * Types
-         WP_Err_t, ErrPtr   -- :: *
-       , WP_IndexInfo_t     -- :: *
-       , WP_Index_t         -- :: *
-       , WP_Entry_t         -- :: *
-
+         WP_Err_t, ErrPtr      -- :: *
+       , WP_IndexInfo_t        -- :: *
+       , WP_Index_t            -- :: *
+       , WP_Entry_t            -- :: *
+       , WP_Query_t            -- :: *
          -- * Errors
-       , c_wp_error_free    -- :: Ptr WP_Err_t -> IO ()
+       , c_wp_error_free       -- :: Ptr WP_Err_t -> IO ()
 
          -- * Indexes
        , c_wp_index_exists     -- :: CString -> CInt
@@ -36,6 +36,22 @@ module Text.Search.Whistlepig.FFI
        , c_wp_entry_add_token  -- :: Ptr WP_Entry_t -> CString -> CString -> IO ErrPtr
        , c_wp_entry_add_string -- :: Ptr WP_Entry_t -> CString -> CString -> IO ErrPtr
        , c_wp_entry_free       -- :: Ptr WP_Entry_t -> IO ErrPtr
+
+         -- * Queries
+       , c_wp_query_new_term        -- :: CString -> CString -> IO (Ptr WP_Query_t)
+       , c_wp_query_new_label       -- :: CString -> IO (Ptr WP_Query_t)
+       , c_wp_query_new_conjunction -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_new_disjunction -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_new_negation    -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_new_phrase      -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_new_empty       -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_new_every       -- :: IO (Ptr WP_Query_t)
+       , c_wp_query_clone           -- :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
+       , c_wp_query_addd            -- :: -> IO (Ptr WP_Query_t)
+       , c_wp_query_free            -- :: Ptr WP_Query_t -> IO ErrPtr
+       , c_wp_query_to_s            -- :: -> IO (Ptr WP_Query_t)
+
+         -- * Searching
        ) where
 
 import Data.Word
@@ -45,6 +61,9 @@ import Foreign.C.String
 
 #include <whistlepig/error.h>
 #include <whistlepig/index.h>
+#include <whistlepig/entry.h>
+#include <whistlepig/query.h>
+#include <whistlepig/search.h>
 
 -- Phantom Types
 
@@ -54,6 +73,7 @@ data WP_Err_t
 data WP_IndexInfo_t
 data WP_Index_t
 data WP_Entry_t
+data WP_Query_t
 
 --
 -- FFI bindings
@@ -105,3 +125,46 @@ foreign import ccall unsafe "wp_entry_add_string"
 
 foreign import ccall unsafe "wp_entry_free"
   c_wp_entry_free :: Ptr WP_Entry_t -> IO ErrPtr
+
+-- Queries
+
+foreign import ccall unsafe "wp_query_new_term"
+  c_wp_query_new_term :: CString -> CString -> IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_label"
+  c_wp_query_new_label :: CString -> IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_conjunction"
+  c_wp_query_new_conjunction :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_disjunction"
+  c_wp_query_new_disjunction :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_negation"
+  c_wp_query_new_negation :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_phrase"
+  c_wp_query_new_phrase :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_empty"
+  c_wp_query_new_empty :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_new_every"
+  c_wp_query_new_every :: IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_clone"
+  c_wp_query_clone :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
+
+{--
+foreign import ccall unsafe "wp_query_substitute"
+  c_wp_query_new_ :: ... -> IO (Ptr WP_Query_t)
+--}
+
+foreign import ccall unsafe "wp_query_add"
+  c_wp_query_addd :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
+
+foreign import ccall unsafe "wp_query_free"
+  c_wp_query_free :: Ptr WP_Query_t -> IO ErrPtr
+
+foreign import ccall unsafe "wp_query_to_s"
+  c_wp_query_to_s :: Ptr WP_Query_t -> CSize -> CString -> IO CSize

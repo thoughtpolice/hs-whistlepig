@@ -14,7 +14,7 @@ module Text.Search.Whistlepig.Query
          Query    -- :: *
        ) where
 
-{--
+{--}
 import Data.Word
 import Control.Monad
 import Foreign.Ptr
@@ -36,4 +36,4 @@ import Text.Search.Whistlepig.Util
 -------------------------------------------------------------------------------
 -- Queries
 
-data Query
+newtype Query = Query (MVar (Ptr WP_Query_t))
