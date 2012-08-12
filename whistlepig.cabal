@@ -39,13 +39,15 @@ library
     Text.Search.Whistlepig.FFI
   build-depends:
     base         >= 4,
-    bytestring   >= 0.9
+    bytestring,
+    transformers,
+    resourcet
 
   cc-options: -std=c99 -D_ANSI_SOURCE -D_XOPEN_SOURCE=600
 
   hs-source-dirs: src
   include-dirs:
-    src/cbits/whistlepig
+    src/cbits
 
   -- why does cabal not allow globbing in c-sources?
   c-sources:
@@ -99,5 +101,5 @@ benchmark bench1
     criterion,
     whistlepig
 
-  ghc-options:      -Wall -fno-warn-orphans
+  ghc-options:      -Wall -fno-warn-orphans -threaded
   default-language: Haskell2010

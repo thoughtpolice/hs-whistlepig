@@ -10,3 +10,4 @@ examples/ffi_test
 examples/ex1
 /.hsenv*
 /dist*
+.sublime-*
