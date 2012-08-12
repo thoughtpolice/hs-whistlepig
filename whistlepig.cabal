@@ -37,6 +37,12 @@ library
     Text.Search.Whistlepig
     Text.Search.Whistlepig.IO
     Text.Search.Whistlepig.FFI
+  other-modules:
+    Text.Search.Whistlepig.Index
+    Text.Search.Whistlepig.Query
+    Text.Search.Whistlepig.Entry
+    Text.Search.Whistlepig.Util
+
   build-depends:
     base         >= 4,
     bytestring,
