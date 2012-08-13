@@ -12,6 +12,7 @@
 module Text.Search.Whistlepig
        ( -- * Introduction
          -- $intro
+
          -- * Tutorial
          -- $tutorial
 
