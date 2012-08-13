@@ -165,7 +165,7 @@ runQuery idx q
 -- some extra memory allocations here and there.
 countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
 countResults idx q
-    = liftIO (WP.countResults idx q)
+    = liftIO (WP.cloneQuery q >>= WP.countResults idx)
   >>= onoesIfErr ("Whistlepig.countResults: could not get result count")
 
 
