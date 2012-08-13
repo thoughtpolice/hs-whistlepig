@@ -37,8 +37,13 @@ module Text.Search.Whistlepig
 
          -- ** Queries
        , WP.Query       -- :: *
+       , newQuery       -- :: Monadresource m => String -> String -> m WP.Query
+       , andQuery       -- :: Monadresource m => Query -> Query -> m WP.Query
+       , orQuery        -- :: Monadresource m => Query -> Query -> m WP.Query
+
        , runQuery       -- :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
        , countResults   -- :: MonadResource m => WP.Index -> WP.Query -> m Word32
+
          -- *** Quasi quoting
        ) where
 
@@ -132,6 +137,21 @@ removeLabel i l d
 
 -------------------------------------------------------------------------------
 -- Queries
+
+-- | Create a new query given a default label to assign to terms
+-- and a query string to parse.
+newQuery :: MonadResource m => String -> String -> m WP.Query
+newQuery l q
+    = liftIO (WP.stringToQuery l q)
+  >>= onoesIfErr "Whistlepig.newQuery: could not create query"
+
+-- | Create a conjunction of two search queries.
+andQuery :: MonadResource m => WP.Query -> WP.Query -> m WP.Query
+andQuery _q1 _q2 = error "NIY"
+
+-- | Create a disjunction of two search queries.
+orQuery :: MonadResource m => WP.Query -> WP.Query -> m WP.Query
+orQuery _q1 _q2 = error "NIY"
 
 -- | Run a 'Query' against an 'Index'. The result is a list of 'DocID's that
 -- the query matches.

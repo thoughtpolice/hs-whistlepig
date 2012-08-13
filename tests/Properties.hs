@@ -19,7 +19,7 @@ main = hspec $ do
     they "can be created" $ runResourceT (void $ create "test")
     they "do exist, unlike unicorns" $ indexExists "test" >>= (@?= True)
     they "can be loaded" $ runResourceT (void $ load "test")
-    they "should be empty right now" $ withIndex "test" $ \idx -> do
+    it "should be empty right now" $ withIndex "test" $ \idx -> do
       sz <- indexSize idx
       when (sz /= 0) $ do
         monadThrow (userError "index size is not zero!")

@@ -24,6 +24,7 @@ module Text.Search.Whistlepig.Query
        , newEmpty      -- :: IO Query
        , newEvery      -- :: IO Query
        , addQuery      -- :: Query -> Query -> IO Query
+       , cloneQuery    -- :: Query -> IO Query
 
          -- *** Parsing queries
        , stringToQuery -- :: String -> String -> IO (Either Error Query)
@@ -102,6 +103,11 @@ addQuery (Query q1) (Query q2) =
   liftQ $ withMVar q1 $ \q1' ->
           withMVar q2 $ \q2' ->
             c_wp_query_add q1' q2'
+
+-- | Do a deep clone of a query, dropping all search state.
+cloneQuery :: Query -> IO Query
+cloneQuery (Query q) = do
+  liftQ $ withMVar q c_wp_query_clone
 
 -------------------------------------------------------------------------------
 -- Parsing
