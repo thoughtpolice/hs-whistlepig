@@ -49,6 +49,7 @@ library
     transformers,
     resourcet
 
+  extra-libraries: pthread
   cc-options: -std=c99 -D_ANSI_SOURCE -D_XOPEN_SOURCE=600
 
   hs-source-dirs: src

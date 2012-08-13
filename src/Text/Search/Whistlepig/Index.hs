@@ -61,10 +61,12 @@ import Text.Search.Whistlepig.Util
 
 -- | A search index.
 newtype Index = Idx (MVar (Ptr WP_Index_t))
+  deriving Eq
 
 -- | A @DocID@ describes the position of a document
 -- in the sorted search index.
 newtype DocID = DocID Word64
+  deriving (Eq, Show)
 
 -- | Check if an 'Index' exists at a particular @FilePath@
 indexExists :: FilePath -- ^ Base path

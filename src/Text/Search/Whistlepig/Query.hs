@@ -31,8 +31,10 @@ module Text.Search.Whistlepig.Query
 
 import Control.Monad (void)
 import Foreign.Ptr
-import Foreign.C.String (withCString)
+import Foreign.Marshal.Alloc
+import Foreign.C.String (withCString, peekCStringLen)
 import Foreign.Storable (peek)
+import System.IO.Unsafe (unsafePerformIO)
 
 import Control.Applicative
 import Control.Concurrent.MVar
@@ -50,6 +52,14 @@ import Text.Search.Whistlepig.Util
 
 -- | An 'Index' query.
 newtype Query = Query (MVar (Ptr WP_Query_t))
+  deriving Eq
+
+instance Show Query where
+  show (Query m) = unsafePerformIO $
+    withMVar m $ \q ->
+    allocaBytes 2048 $ \out -> do
+      res <- c_wp_query_to_s q 2048 out
+      peekCStringLen (out, fromIntegral res)
 
 -- | Create a new 'Query' out of a term to search for, and a field
 -- it is attached to.
@@ -103,10 +113,10 @@ addQuery (Query q1) (Query q2) =
 -- If a term in the input query does not have an associated field,
 -- then it is attached the field specified in the default field
 -- parameter.
-stringToQuery :: String -- ^ Query
-              -> String -- ^ Default field to assign a term to
+stringToQuery :: String -- ^ Default field to assign a term to
+              -> String -- ^ Query
               -> IO (Either Error Query)
-stringToQuery query field =
+stringToQuery field query =
   withCString query $ \q ->
   withCString field $ \f ->
   allocaNull $ \out -> do

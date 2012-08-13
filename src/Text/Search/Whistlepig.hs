@@ -129,7 +129,8 @@ removeLabel idx label docid = error "NIY"
 -- | Run a 'Query' against an 'Index'. The result is a list of 'DocID's that
 -- the query matches.
 runQuery :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
-runQuery idx q = error "NIY"
+runQuery idx q =   liftIO (WP.runQuery idx q)
+               >>= onoesIfErr ("Whistlepig.runQuery: could not run query")
 
 -- | Returns the number of results that match a query. Note
 -- this is about as expensive as executing 'runQuery' modulo

@@ -9,6 +9,7 @@ import Test.Hspec
 import Test.HUnit
 
 import Text.Search.Whistlepig
+import qualified Text.Search.Whistlepig.IO as IO
 
 main :: IO ()
 main = hspec $ do
@@ -31,7 +32,11 @@ main = hspec $ do
 
   -------------------------------------------------------------------------------
   -- Queries
-  describe "queries" $ return ()
+  describe "queries" $ do
+    they "can be shown" $ do
+      x <- IO.stringToQuery "body" "bob ~funny"
+      q <- errLeft "Could not create query!" x
+      print q
 
   -------------------------------------------------------------------------------
   -- Searching
