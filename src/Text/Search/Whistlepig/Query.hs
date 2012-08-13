@@ -79,21 +79,27 @@ newLabelQuery :: String -- ^ Label to search for
 newLabelQuery label =
   liftQ $ withCString label c_wp_query_new_label
 
+-- | New conjunction node.
 newConj :: IO Query
 newConj = liftQ c_wp_query_new_conjunction
 
+-- | New disjunction node.
 newDisj :: IO Query
 newDisj = liftQ c_wp_query_new_disjunction
 
+-- | New negation node.
 newNeg :: IO Query
 newNeg = liftQ c_wp_query_new_negation
 
+-- | TODO.
 newPhrase :: IO Query
 newPhrase = liftQ c_wp_query_new_phrase
 
+-- | TODO.
 newEmpty :: IO Query
 newEmpty = liftQ c_wp_query_new_empty
 
+-- | TODO.
 newEvery :: IO Query
 newEvery = liftQ c_wp_query_new_every
 
