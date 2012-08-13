@@ -123,7 +123,7 @@ addLabel i l d
 -- | Remove a label from some document in the 'Index' via the 'DocID'.
 removeLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
 removeLabel i l d
-    = liftIO (WP.addLabel i l d)
+    = liftIO (WP.removeLabel i l d)
   >>= onoesIfErr2 ("Whistlepig.removeLabel: could not rm label")
 
 -------------------------------------------------------------------------------
@@ -147,6 +147,7 @@ countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
 countResults idx q
     = liftIO (WP.countResults idx q)
   >>= onoesIfErr ("Whistlepig.countResults: could not get result count")
+
 
 -------------------------------------------------------------------------------
 -- Utilities
