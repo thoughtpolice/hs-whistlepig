@@ -125,9 +125,14 @@ removeLabel idx label docid = error "NIY"
 -------------------------------------------------------------------------------
 -- Queries
 
+-- | Run a 'Query' against an 'Index'. The result is a list of 'DocID's that
+-- the query matches.
 runQuery :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
 runQuery idx q = error "NIY"
 
+-- | Returns the number of results that match a query. Note
+-- this is about as expensive as executing 'runQuery' modulo
+-- some extra memory allocations here and there.
 countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
 countResults idx q = error "NIY"
 

@@ -145,7 +145,7 @@ removeLabel (Idx i) lbl (DocID did) =
   withMVar i $ \i' ->
     toError =<< c_wp_index_remove_label i' lbl' did
 
--- Type of results you get from running a 'Query'.
+-- | Type of results you get from running a 'Query'.
 type Results = [DocID]
 
 -- | Run a 'Query' against an 'Index'.
