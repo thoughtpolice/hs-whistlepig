@@ -112,7 +112,7 @@ addQuery (Query q1) (Query q2) =
 
 -- | Do a deep clone of a query, dropping all search state.
 cloneQuery :: Query -> IO Query
-cloneQuery (Query q) = do
+cloneQuery (Query q) =
   liftQ $ withMVar q c_wp_query_clone
 
 -------------------------------------------------------------------------------
