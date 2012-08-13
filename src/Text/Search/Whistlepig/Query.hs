@@ -135,4 +135,5 @@ finalizeQuery q = do
     p <- newMVar q
     addMVarFinalizer p (finalize p)
     return $! Query p
+  -- TODO FIXME (#7): Should not ignore err!
   where finalize = flip withMVar (void . c_wp_query_free)
