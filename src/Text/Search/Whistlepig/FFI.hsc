@@ -54,7 +54,7 @@ module Text.Search.Whistlepig.FFI
        , c_wp_query_new_empty       -- :: IO (Ptr WP_Query_t)
        , c_wp_query_new_every       -- :: IO (Ptr WP_Query_t)
        , c_wp_query_clone           -- :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
-       , c_wp_query_addd            -- :: ... -> IO (Ptr WP_Query_t)
+       , c_wp_query_add             -- :: ... -> IO (Ptr WP_Query_t)
        , c_wp_query_free            -- :: Ptr WP_Query_t -> IO ErrPtr
        , c_wp_query_to_s            -- :: ...-> IO (Ptr WP_Query_t)
        , c_wp_query_parse -- :: CString -> CString -> (Ptr (Ptr WP_Query_t)) -> IO ErrPtr
@@ -202,7 +202,7 @@ foreign import ccall unsafe "wp_query_substitute"
 --}
 
 foreign import ccall unsafe "wp_query_add"
-  c_wp_query_addd :: Ptr WP_Query_t -> IO (Ptr WP_Query_t)
+  c_wp_query_add :: Ptr WP_Query_t -> Ptr WP_Query_t -> IO (Ptr WP_Query_t)
 
 foreign import ccall unsafe "wp_query_free"
   c_wp_query_free :: Ptr WP_Query_t -> IO ErrPtr
