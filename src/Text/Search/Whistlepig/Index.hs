@@ -149,7 +149,7 @@ type Results = [DocID]
 
 -- | Run a 'Query' against an 'Index'.
 runQuery :: Index -> Query -> IO (Either Error Results)
-runQuery (Idx _i) (Query _q) = undefined
+runQuery (Idx _i) (Query _q) = error "NIY"
 
 -- | Returns the number of results that match a query. Note
 -- this is about as expensive as executing 'runQuery' modulo

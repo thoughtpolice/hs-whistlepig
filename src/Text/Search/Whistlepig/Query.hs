@@ -113,4 +113,4 @@ liftQ k = Query <$> (newMVar =<< k)
 stringToQuery :: String -- ^ Query
               -> String -- ^ Default field to assign a term to
               -> IO (Either Error Query)
-stringToQuery _query _field = undefined
+stringToQuery _query _field = error "NIY"
