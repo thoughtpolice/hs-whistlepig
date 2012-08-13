@@ -27,7 +27,7 @@ import Text.Search.Whistlepig.FFI
 -------------------------------------------------------------------------------
 -- Errors
 
--- TODO FIXME: expand ability to get error information
+-- TODO FIXME (#2): expand ability to get error information
 
 -- | The @Error@ type is returned by Whistlepig functions to indicate errors
 -- somewhere.

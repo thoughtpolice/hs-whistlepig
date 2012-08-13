@@ -52,7 +52,7 @@ newEntry = do
     p <- newMVar =<< c_wp_entry_new
     addMVarFinalizer p (finalize p)
     return (Entry p)
-    -- TODO FIXME: should probably handle this somehow?
+    -- TODO FIXME (#5): should probably handle this somehow?
     -- get rid of 'void!'
   where finalize = flip withMVar (void . c_wp_entry_free)
 

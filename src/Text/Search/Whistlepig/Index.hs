@@ -160,7 +160,7 @@ countResults (Idx i) (Query q) =
   alloca $ \out ->
   withMVar i $ \idx ->
   withMVar q $ \query -> do
-    -- TODO FIXME: shouldn't ignore err. shouldn't leak at least.
+    -- TODO FIXME (#4): shouldn't ignore err. shouldn't leak at least.
     void $ toError =<< c_wp_index_setup_query idx query
     e <- liftIO $ toError =<< c_wp_index_count_results idx query out
     void $ toError =<< c_wp_index_teardown_query idx query
@@ -175,6 +175,6 @@ toIndex ptr = do
     mvar <- newMVar ptr
     addMVarFinalizer mvar (finalize mvar)
     return $! (Idx mvar)
-    -- TODO FIXME: should probably handle this somehow?
+    -- TODO FIXME (#4): should probably handle this somehow?
     -- get rid of 'void!'
   where finalize = flip withMVar (void . c_wp_index_free)

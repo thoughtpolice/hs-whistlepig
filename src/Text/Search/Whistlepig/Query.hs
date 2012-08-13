@@ -96,7 +96,7 @@ addQuery (Query q1) (Query q2) =
 -------------------------------------------------------------------------------
 -- Parsing
 
--- TODO FIXME : should have quasiquoting!
+-- TODO FIXME (#1): should have quasiquoting!
 
 -- | Parse a 'String' into a 'Query'.
 --
