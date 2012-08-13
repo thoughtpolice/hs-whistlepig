@@ -20,7 +20,7 @@ module Text.Search.Whistlepig.Index
        , loadIndex       -- :: FilePath -> IO (Maybe Index)
        , closeIndex      -- :: Index    -> IO ()
        , deleteIndex     -- :: FilePath -> IO ()
-       , indexSize       -- :: Index    -> Word64
+       , indexSize       -- :: Index    -> IO (Either Error Word64)
 
          -- *** Adding documents and entries.
        , DocID           -- :: *

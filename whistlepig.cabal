@@ -87,8 +87,9 @@ test-suite properties
   build-depends:
     base           >= 4,
     bytestring,
+    transformers,
+    resourcet,
     HUnit,
-    QuickCheck,
     hspec,
     whistlepig
 

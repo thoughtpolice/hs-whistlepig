@@ -2,31 +2,26 @@ module Main
        ( main -- :: IO ()
        ) where
 
+import Control.Monad (void, when)
+import Control.Monad.Trans.Resource
+
 import Test.Hspec
 import Test.HUnit
 
-import Text.Search.Whistlepig.IO
-import Text.Search.Whistlepig.FFI()
+import Text.Search.Whistlepig
 
 main :: IO ()
 main = hspec $ do
   -------------------------------------------------------------------------------
   -- Indexes
   describe "indexes" $ do
-    they "can be created" $ do
-      idx <- createIndex "test" >>= errLeft "could not create"
-      closeIndex idx >>= errJust "could not close"
-    they "do exist, unlike unicorns" $ do
-      r <- indexExists "test"
-      r @?= True
-    they "can be loaded" $ do
-      idx <- loadIndex "test" >>= errLeft "could not load"
-      closeIndex idx >>= errJust "could not close"
-    they "should be empty right now" $ do
-      idx <- loadIndex "test" >>= errLeft "could not load"
-      sz  <- indexSize idx >>= errLeft "could not get size"
-      sz @?= 0
-      closeIndex idx >>= errJust "could not close"
+    they "can be created" $ runResourceT (void $ create "test")
+    they "do exist, unlike unicorns" $ indexExists "test" >>= (@?= True)
+    they "can be loaded" $ runResourceT (void $ load "test")
+    they "should be empty right now" $ withIndex "test" $ \idx -> do
+      sz <- indexSize idx
+      when (sz /= 0) $ do
+        monadThrow (userError "index size is not zero!")
     they "can be destroyed" $
       deleteIndex "test" >>= errJust "could not delete"
 

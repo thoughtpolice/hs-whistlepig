@@ -32,6 +32,10 @@ import Text.Search.Whistlepig.FFI
 -- | The @Error@ type is returned by Whistlepig functions to indicate errors
 -- somewhere.
 newtype Error = Error (ForeignPtr WP_Err_t)
+  deriving Eq
+
+instance Show Error where
+  show _ = "ERROR!" -- TODO FIXME: obvious
 
 -- | Convenient wrapper that adds a finalizer to the 'Error' pointer if
 -- it is needed so it will get freed.
