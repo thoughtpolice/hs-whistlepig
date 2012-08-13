@@ -24,9 +24,9 @@ module Text.Search.Whistlepig.Index
 
          -- *** Adding documents and entries.
        , DocID           -- :: *
-       , addEntry        -- :: Entry -> Index -> IO (Either Error DocID)
-       , addLabel        -- :: Entry -> String -> DocID -> IO (Maybe Error)
-       , removeLabel     -- :: Entry -> String -> DocID -> IO (Maybe Error)
+       , addEntry        -- :: Index -> Entry -> IO (Either Error DocID)
+       , addLabel        -- :: Index -> String -> DocID -> IO (Maybe Error)
+       , removeLabel     -- :: Index -> String -> DocID -> IO (Maybe Error)
 
          -- *** Running queries
        , Results         -- :: *

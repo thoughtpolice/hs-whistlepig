@@ -104,20 +104,27 @@ withIndex path = runResourceT . (open path >>=)
 
 -- | Get the size of an 'Index'.
 indexSize :: MonadResource m => WP.Index -> m Word64
-indexSize idx =   liftIO (WP.indexSize idx)
-              >>= onoesIfErr ("Whistlepig.indexSize: could not get size")
+indexSize idx
+    = liftIO (WP.indexSize idx)
+  >>= onoesIfErr ("Whistlepig.indexSize: could not get size")
 
 -- | Add an 'Entry' to the 'Index' and get back the 'DocID'.
 addEntry :: MonadResource m => WP.Index -> WP.Entry -> m WP.DocID
-addEntry idx entry = error "NIY"
+addEntry idx entry
+    = liftIO (WP.addEntry idx entry)
+  >>= onoesIfErr ("Whistlepig.addEntry: could not add entry")
 
 -- | Add a label to some document in the 'Index' via the 'DocID'.
 addLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
-addLabel idx label docid = error "NIY"
+addLabel i l d 
+    = liftIO (WP.addLabel i l d)
+  >>= onoesIfErr2 ("Whistlepig.addLabel: could not add label")
 
 -- | Remove a label from some document in the 'Index' via the 'DocID'.
 removeLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
-removeLabel idx label docid = error "NIY"
+removeLabel i l d
+    = liftIO (WP.addLabel i l d)
+  >>= onoesIfErr2 ("Whistlepig.removeLabel: could not rm label")
 
 -------------------------------------------------------------------------------
 -- Entry management
@@ -129,14 +136,17 @@ removeLabel idx label docid = error "NIY"
 -- | Run a 'Query' against an 'Index'. The result is a list of 'DocID's that
 -- the query matches.
 runQuery :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
-runQuery idx q =   liftIO (WP.runQuery idx q)
-               >>= onoesIfErr ("Whistlepig.runQuery: could not run query")
+runQuery idx q
+    = liftIO (WP.runQuery idx q)
+  >>= onoesIfErr ("Whistlepig.runQuery: could not run query")
 
 -- | Returns the number of results that match a query. Note
 -- this is about as expensive as executing 'runQuery' modulo
 -- some extra memory allocations here and there.
 countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
-countResults idx q = error "NIY"
+countResults idx q
+    = liftIO (WP.countResults idx q)
+  >>= onoesIfErr ("Whistlepig.countResults: could not get result count")
 
 -------------------------------------------------------------------------------
 -- Utilities
