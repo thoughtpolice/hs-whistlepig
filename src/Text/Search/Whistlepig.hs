@@ -10,12 +10,16 @@
 -- This module provides a high level interface to the Whistlepig C library.
 -- 
 module Text.Search.Whistlepig
-       ( -- * Tutorial
+       ( -- * Introduction
+         -- $intro
+         -- * Tutorial
          -- $tutorial
 
          -- * Interface
          -- ** Index management
-         WP.Index
+         WP.Index       -- :: *
+       , WP.DocID       -- :: *
+       , WP.Results     -- :: *
        , WP.indexExists -- :: FilePath -> IO Bool
        , WP.deleteIndex -- :: FilePath -> IO ()
        , create         -- :: MonadResource m => FilePath -> m WP.Index
@@ -23,10 +27,17 @@ module Text.Search.Whistlepig
        , open           -- :: MonadResource m => FilePath -> m WP.Index
        , withIndex      -- :: FilePath -> (WP.Index -> ResourceT IO a) -> IO a
        , indexSize      -- :: MonadResource m => WP.Index -> m Word64
+       , addEntry       -- :: MonadResource m => WP.Index -> WP.Entry -> m WP.DocID
+       , addLabel       -- :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
+       , removeLabel    -- :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
 
          -- ** Entry management
+       , WP.Entry       -- :: *
 
          -- ** Queries
+       , WP.Query       -- :: *
+       , runQuery       -- :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
+       , countResults   -- :: MonadResource m => WP.Index -> WP.Query -> m Word32
          -- *** Quasi quoting
        ) where
 
@@ -37,6 +48,17 @@ import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Resource
 
 import qualified Text.Search.Whistlepig.IO as WP
+
+-------------------------------------------------------------------------------
+-- Introduction
+
+-- $intro
+-- Whistlepig is a minimalist realtime full-text search index. Its goal is to
+-- be as small and maintainable as possible, while still remaining useful,
+-- performant and scalable to large corpora. If you want realtime full-text
+-- search without the frills, Whistlepig may be for you.
+--
+
 
 -------------------------------------------------------------------------------
 -- Tutorial
@@ -84,6 +106,18 @@ indexSize :: MonadResource m => WP.Index -> m Word64
 indexSize idx =   liftIO (WP.indexSize idx)
               >>= onoesIfErr ("Whistlepig.indexSize: could not get size")
 
+-- | Add an 'Entry' to the 'Index' and get back the 'DocID'.
+addEntry :: MonadResource m => WP.Index -> WP.Entry -> m WP.DocID
+addEntry idx entry = error "NIY"
+
+-- | Add a label to some document in the 'Index' via the 'DocID'.
+addLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
+addLabel idx label docid = error "NIY"
+
+-- | Remove a label from some document in the 'Index' via the 'DocID'.
+removeLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
+removeLabel idx label docid = error "NIY"
+
 -------------------------------------------------------------------------------
 -- Entry management
 
@@ -91,6 +125,11 @@ indexSize idx =   liftIO (WP.indexSize idx)
 -------------------------------------------------------------------------------
 -- Queries
 
+runQuery :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
+runQuery idx q = error "NIY"
+
+countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
+countResults idx q = error "NIY"
 
 -------------------------------------------------------------------------------
 -- Utilities

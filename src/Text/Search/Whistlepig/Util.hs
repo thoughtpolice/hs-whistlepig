@@ -11,9 +11,9 @@
 --
 module Text.Search.Whistlepig.Util
        ( -- * Errors
-         Error(..)
-       , toError
-       , allocaNull
+         Error(..)  -- :: *
+       , toError    -- :: Ptr WP_Err_t -> IO (Maybe Error)
+       , allocaNull -- :: (Ptr (Ptr a) -> IO b) -> IO b
        ) where
 
 import Foreign.Ptr

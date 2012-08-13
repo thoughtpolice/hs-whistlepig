@@ -29,7 +29,8 @@ module Text.Search.Whistlepig.Index
        , removeLabel     -- :: Entry -> String -> DocID -> IO (Maybe Error)
 
          -- *** Running queries
-       , runQuery        -- ::
+       , Results         -- :: *
+       , runQuery        -- :: Index -> Query -> IO (Either Error Results)
        , countResults    -- :: Index -> Query -> IO (Either Error Word32)
        ) where
 
