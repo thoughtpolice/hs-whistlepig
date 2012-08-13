@@ -23,15 +23,16 @@ module Text.Search.Whistlepig.Query
        , newPhrase     -- :: IO Query
        , newEmpty      -- :: IO Query
        , newEvery      -- :: IO Query
-
        , addQuery      -- :: Query -> Query -> IO Query
 
          -- *** Parsing queries
        , stringToQuery -- :: String -> String -> IO (Either Error Query)
        ) where
 
+import Control.Monad (void)
 import Foreign.Ptr
-import Foreign.C.String
+import Foreign.C.String (withCString)
+import Foreign.Storable (peek)
 
 import Control.Applicative
 import Control.Concurrent.MVar
@@ -55,21 +56,17 @@ newtype Query = Query (MVar (Ptr WP_Query_t))
 newTermQuery :: String -- ^ Field which word contains
              -> String -- ^ Term to search for
              -> IO Query
-newTermQuery field word = do
-  q <- withCString field $ \f ->
-       withCString word $ \w ->
-         c_wp_query_new_term f w
-  Query <$> newMVar q
+newTermQuery field word =
+  liftQ $ withCString field $ \f ->
+          withCString word $ \w ->
+            c_wp_query_new_term f w
 
 -- | Create a new 'Query' out of a term to search for, and a field
 -- it is attached to.
 newLabelQuery :: String -- ^ Label to search for
               -> IO Query
-newLabelQuery label = do
-  q <- withCString label $ \l ->
-         c_wp_query_new_label l
-  Query <$> newMVar q
-
+newLabelQuery label =
+  liftQ $ withCString label c_wp_query_new_label
 
 newConj :: IO Query
 newConj = liftQ c_wp_query_new_conjunction
@@ -91,14 +88,10 @@ newEvery = liftQ c_wp_query_new_every
 
 -- | Link two 'Query' objects together.
 addQuery :: Query -> Query -> IO Query
-addQuery (Query q1) (Query q2) = do
-  r <- withMVar q1 $ \q1' ->
-       withMVar q2 $ \q2' ->
-         c_wp_query_add q1' q2'
-  Query <$> (newMVar r)
-
-liftQ :: IO (Ptr WP_Query_t) -> IO Query
-liftQ k = Query <$> (newMVar =<< k)
+addQuery (Query q1) (Query q2) =
+  liftQ $ withMVar q1 $ \q1' ->
+          withMVar q2 $ \q2' ->
+            c_wp_query_add q1' q2'
 
 -------------------------------------------------------------------------------
 -- Parsing
@@ -113,4 +106,23 @@ liftQ k = Query <$> (newMVar =<< k)
 stringToQuery :: String -- ^ Query
               -> String -- ^ Default field to assign a term to
               -> IO (Either Error Query)
-stringToQuery _query _field = error "NIY"
+stringToQuery query field =
+  withCString query $ \q ->
+  withCString field $ \f ->
+  allocaNull $ \out -> do
+    e <- toError =<< c_wp_query_parse q f out
+    maybe (toR =<< peek out) (return . Left) e
+  where toR o = Right <$> finalizeQuery o
+
+-------------------------------------------------------------------------------
+-- Utilities
+
+liftQ :: IO (Ptr WP_Query_t) -> IO Query
+liftQ = (>>= finalizeQuery)
+
+finalizeQuery :: Ptr WP_Query_t -> IO Query
+finalizeQuery q = do
+    p <- newMVar q
+    addMVarFinalizer p (finalize p)
+    return $! Query p
+  where finalize = flip withMVar (void . c_wp_query_free)
