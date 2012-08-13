@@ -147,11 +147,11 @@ newQuery l q
 
 -- | Create a conjunction of two search queries.
 andQuery :: MonadResource m => WP.Query -> WP.Query -> m WP.Query
-andQuery _q1 _q2 = error "NIY"
+andQuery q1 q2 = liftIO (WP.newConj >>= cloneAndAdd2 q1 q2)
 
 -- | Create a disjunction of two search queries.
 orQuery :: MonadResource m => WP.Query -> WP.Query -> m WP.Query
-orQuery _q1 _q2 = error "NIY"
+orQuery q1 q2 = liftIO (WP.newDisj >>= cloneAndAdd2 q1 q2)
 
 -- | Run a 'Query' against an 'Index'. The result is a list of 'DocID's that
 -- the query matches.
@@ -171,6 +171,15 @@ countResults idx q
 
 -------------------------------------------------------------------------------
 -- Utilities
+
+cloneAndAdd2 :: WP.Query -- ^ Query to add to
+             -> WP.Query -- ^ First query to add
+             -> WP.Query -- ^ Second query to add
+             -> IO WP.Query
+cloneAndAdd2 q1 q2 r = do
+  r'  <- WP.addQuery r =<< WP.cloneQuery q1
+  r'' <- WP.addQuery r' =<< WP.cloneQuery q2
+  return r''
 
 bool :: a -> a -> Bool -> a
 bool y n b = if b then y else n
