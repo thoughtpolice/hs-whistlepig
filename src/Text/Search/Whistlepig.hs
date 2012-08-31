@@ -111,25 +111,25 @@ withIndex path = runResourceT . (open path >>=)
 indexSize :: MonadResource m => WP.Index -> m Word64
 indexSize idx
     = liftIO (WP.indexSize idx)
-  >>= onoesIfErr ("Whistlepig.indexSize: could not get size")
+  >>= onoesIfErr "Whistlepig.indexSize: could not get size"
 
 -- | Add an 'Entry' to the 'Index' and get back the 'DocID'.
 addEntry :: MonadResource m => WP.Index -> WP.Entry -> m WP.DocID
 addEntry idx entry
     = liftIO (WP.addEntry idx entry)
-  >>= onoesIfErr ("Whistlepig.addEntry: could not add entry")
+  >>= onoesIfErr "Whistlepig.addEntry: could not add entry"
 
 -- | Add a label to some document in the 'Index' via the 'DocID'.
 addLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
 addLabel i l d
     = liftIO (WP.addLabel i l d)
-  >>= onoesIfErr2 ("Whistlepig.addLabel: could not add label")
+  >>= onoesIfErr2 "Whistlepig.addLabel: could not add label"
 
 -- | Remove a label from some document in the 'Index' via the 'DocID'.
 removeLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
 removeLabel i l d
     = liftIO (WP.removeLabel i l d)
-  >>= onoesIfErr2 ("Whistlepig.removeLabel: could not rm label")
+  >>= onoesIfErr2 "Whistlepig.removeLabel: could not rm label"
 
 -------------------------------------------------------------------------------
 -- Entry management
@@ -158,7 +158,7 @@ orQuery q1 q2 = liftIO (WP.newDisj >>= cloneAndAdd2 q1 q2)
 runQuery :: MonadResource m => WP.Index -> WP.Query -> m WP.Results
 runQuery idx q
     = liftIO (WP.runQuery idx q)
-  >>= onoesIfErr ("Whistlepig.runQuery: could not run query")
+  >>= onoesIfErr "Whistlepig.runQuery: could not run query"
 
 -- | Returns the number of results that match a query. Note
 -- this is about as expensive as executing 'runQuery' modulo
@@ -166,7 +166,7 @@ runQuery idx q
 countResults :: MonadResource m => WP.Index -> WP.Query -> m Word32
 countResults idx q
     = liftIO (WP.cloneQuery q >>= WP.countResults idx)
-  >>= onoesIfErr ("Whistlepig.countResults: could not get result count")
+  >>= onoesIfErr "Whistlepig.countResults: could not get result count"
 
 
 -------------------------------------------------------------------------------
@@ -178,8 +178,7 @@ cloneAndAdd2 :: WP.Query -- ^ Query to add to
              -> IO WP.Query
 cloneAndAdd2 q1 q2 r = do
   r'  <- WP.addQuery r =<< WP.cloneQuery q1
-  r'' <- WP.addQuery r' =<< WP.cloneQuery q2
-  return r''
+  WP.addQuery r' =<< WP.cloneQuery q2
 
 bool :: a -> a -> Bool -> a
 bool y n b = if b then y else n
