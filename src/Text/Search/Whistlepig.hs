@@ -121,7 +121,7 @@ addEntry idx entry
 
 -- | Add a label to some document in the 'Index' via the 'DocID'.
 addLabel :: MonadResource m => WP.Index -> String -> WP.DocID -> m ()
-addLabel i l d 
+addLabel i l d
     = liftIO (WP.addLabel i l d)
   >>= onoesIfErr2 ("Whistlepig.addLabel: could not add label")
 
