@@ -2,13 +2,13 @@
 -- Module      : Text.Search.Whistlepig
 -- Copyright   : (c) Austin Seipp 2012
 -- License     : BSD3
--- 
+--
 -- Maintainer  : mad.one@gmail.com
 -- Stability   : experimental
 -- Portability : portable
--- 
+--
 -- This module provides a high level interface to the Whistlepig C library.
--- 
+--
 module Text.Search.Whistlepig
        ( -- * Introduction
          -- $intro
@@ -83,9 +83,9 @@ create path = liftIO (WP.indexExists path) >>= bool err create'
   where err = throwErr "Whistlepig.create: index already exists"
         create' = snd <$> allocate (open' path) close'
         open' p =    WP.createIndex p
-                 >>= onoesIfErr ("whistlepig: could not open index "++p)
+                 >>= onoesIfErr ("Whistlepig: could not open index "++p)
         close' idx =   WP.closeIndex idx
-                   >>= onoesIfErr2 ("whistlepig: could not close index "++path)
+                   >>= onoesIfErr2 ("Whistlepig: could not close index "++path)
 
 -- | Load an 'Index'. If it does not exist, this function throws an error.
 load :: MonadResource m => FilePath -> m WP.Index
@@ -93,9 +93,9 @@ load path = liftIO (WP.indexExists path) >>= bool load' err
   where err = throwErr "Whistlepig.load: index doesn't exist"
         load'   = snd <$> allocate (open' path) close'
         open' p =   WP.loadIndex p
-                >>= onoesIfErr ("whistlepig: could not load index "++p)
+                >>= onoesIfErr ("Whistlepig: could not load index "++p)
         close' idx =   WP.closeIndex idx
-                   >>= onoesIfErr2 ("whistlepig: could not close index "++path)
+                   >>= onoesIfErr2 ("Whistlepig: could not close index "++path)
 
 -- | Opens an 'Index'. If the index exists, it is opened. If it does not, it
 -- is created. If you want to delete an 'Index' before opening it, use
