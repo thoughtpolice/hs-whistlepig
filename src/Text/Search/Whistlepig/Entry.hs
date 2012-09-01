@@ -66,7 +66,7 @@ addToken :: Entry  -- ^ Entry
          -> String -- ^ Field
          -> String -- ^ Term
          -> IO (Maybe Error)
-addToken (Entry e) f t = 
+addToken (Entry e) f t =
   withCString f $ \field ->
   withCString t $ \term  ->
   withMVar e $ \p        ->

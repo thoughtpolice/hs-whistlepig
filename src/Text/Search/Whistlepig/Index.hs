@@ -73,7 +73,7 @@ indexExists :: FilePath -- ^ Base path
             -> IO Bool
 indexExists = flip withCString $ \path -> do
   err <- c_wp_index_exists path
-  return $! if (err /= 0) then True else False
+  return $! err /= 0
 
 -- | Create an 'Index' on the filesystem with a base path.
 createIndex :: FilePath -- ^ Base path
@@ -104,8 +104,7 @@ closeIndex (Idx i) = withMVar i go
 -- | Delete an 'Index' from the disk.
 deleteIndex :: FilePath -- ^ Base path
             -> IO (Maybe Error)
-deleteIndex = flip withCString $ \path ->
-  c_wp_index_delete path >>= toError
+deleteIndex = flip withCString (c_wp_index_delete >=> toError)
 
 -- | Get the number of documents in an index.
 indexSize :: Index -- ^ Index
@@ -176,7 +175,7 @@ toIndex :: Ptr WP_Index_t -> IO Index
 toIndex ptr = do
     mvar <- newMVar ptr
     addMVarFinalizer mvar (finalize mvar)
-    return $! (Idx mvar)
+    return $! Idx mvar
     -- TODO FIXME (#4): should probably handle this somehow?
     -- get rid of 'void!'
   where finalize = flip withMVar (void . c_wp_index_free)
