@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.HUnit
 
 import Text.Search.Whistlepig
-import qualified Text.Search.Whistlepig.IO as IO
+import qualified Text.Search.Whistlepig.Direct as IO
 
 main :: IO ()
 main = hspec $ do
