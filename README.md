@@ -36,7 +36,9 @@ See [AUTHORS.txt](https://raw.github.com/thoughtpolice/hs-whistlepig/master/AUTH
 
 # License
 
-BSD3. See `LICENSE.txt` for terms of copyright and redistribution.
+BSD3. See
+[LICENSE.txt](https://raw.github.com/thoughtpolice/hs-whistlepig/master/LICENSE.txt)
+for terms of copyright and redistribution.
 
 [Whistlepig]: https://github.com/wmorgan/whistlepig
 [heliotrope]: https://github.com/wmorgan/heliotrope

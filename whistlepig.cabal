@@ -23,7 +23,7 @@ tested-with:         GHC == 7.0.4,
 
 extra-source-files:
   AUTHORS.txt
-  README.md
+  README.md CONTRIBUTING.md CHANGELOG.md
   examples/*.hs
   tests/*.hs
   bench/*.hs
