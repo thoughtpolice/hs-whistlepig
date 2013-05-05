@@ -44,8 +44,6 @@ import Foreign.Marshal.Alloc
 import Control.Applicative
 import Control.Concurrent
 
-import Control.Monad.IO.Class
-
 import Text.Search.Whistlepig.Entry
 import Text.Search.Whistlepig.FFI
 import Text.Search.Whistlepig.Query
@@ -163,7 +161,7 @@ countResults (Idx i) (Query q) =
   withMVar q $ \query -> do
     -- TODO FIXME (#4): shouldn't ignore err. shouldn't leak at least.
     void $ toError =<< c_wp_index_setup_query idx query
-    e <- liftIO $ toError =<< c_wp_index_count_results idx query out
+    e <- toError =<< c_wp_index_count_results idx query out
     void $ toError =<< c_wp_index_teardown_query idx query
     maybe (Right <$> peek out) (return . Left) e
 

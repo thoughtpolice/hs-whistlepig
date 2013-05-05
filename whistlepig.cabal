@@ -1,5 +1,5 @@
 name:                whistlepig
-version:             0.0
+version:             0.0.0.0
 synopsis:            Haskell bindings to Whistlepig
 description:         
   Whistlepig is minimalistic, full-text realtime search engine written in C.
@@ -35,7 +35,6 @@ source-repository head
 library
   exposed-modules:
     Text.Search.Whistlepig
-    Text.Search.Whistlepig.IO
     Text.Search.Whistlepig.FFI
   other-modules:
     Text.Search.Whistlepig.Index
@@ -45,10 +44,7 @@ library
 
   build-depends:
     base         >= 4,
-    bytestring,
-    transformers,
-    resourcet
-
+    bytestring
   extra-libraries: pthread
   cc-options: -std=c99 -D_ANSI_SOURCE -D_XOPEN_SOURCE=600
 
