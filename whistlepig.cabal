@@ -35,6 +35,7 @@ source-repository head
 library
   exposed-modules:
     Text.Search.Whistlepig
+    Text.Search.Whistlepig.Direct
     Text.Search.Whistlepig.FFI
   other-modules:
     Text.Search.Whistlepig.Index
